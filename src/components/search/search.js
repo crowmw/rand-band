@@ -1,6 +1,5 @@
 import React, { Component } from 'react'
 import axios from 'axios'
-import wiki from 'wikijs'
 // import thief from 'color-thief'
 import './style.css'
 import { flickrKey } from '../../config'
@@ -23,16 +22,19 @@ class Search extends Component {
   }
 
   getRandomTitle = () => {
-    return wiki()
-      .random(1)
+    return axios
+      .get(
+        `https://en.wikipedia.org/w/api.php?format=json&origin=*&action=query&generator=random&grnnamespace=0&prop=revisions|images&rvprop=content&grnlimit=1`
+      )
       .then(res => {
-        if (res[0].includes('(')) {
-          return res[0].slice(0, res[0].indexOf('('))
+        let response = res.data.query.pages[Object.keys(res.data.query.pages)[0]].title
+        if (response.includes('(')) {
+          return response.slice(0, response.indexOf('('))
         }
-        if (res[0].includes(',')) {
-          return res[0].slice(0, res[0].indexOf(','))
+        if (response.includes(',')) {
+          return response.slice(0, response.indexOf(','))
         }
-        return res
+        return response
       })
       .catch(err => console.error(err))
   }
@@ -57,7 +59,7 @@ class Search extends Component {
     var url = `https://api.flickr.com/services/rest/?method=flickr.photos.getRecent`
     url += `&format=json`
     url += `&nojsoncallback=1`
-    url += `&per_page=20`
+    url += `&per_page=50`
     url += `&page=${Math.floor(Math.random() * 100) + 1}`
     url += `&media=photos`
     url += `&license=1,2,3,4,5,6,7`
@@ -82,19 +84,19 @@ class Search extends Component {
   _handleSearchClick() {
     this.setState({ fetching: true })
     this.getRandomTitle()
-      .then(res => {
+      .then(res =>
         this.setState(
           {
             newData: { ...this.state.newData, bandName: res }
           },
           () =>
-            this.getRandomAlbumTitle().then(res => {
+            this.getRandomAlbumTitle().then(res =>
               this.setState(
                 {
                   newData: { ...this.state.newData, albumName: res }
                 },
                 () =>
-                  this.getRandomAlbumCover().then(res => {
+                  this.getRandomAlbumCover().then(res =>
                     this.setState(
                       {
                         newData: { ...this.state.newData, albumCover: res }
@@ -108,11 +110,11 @@ class Search extends Component {
                           fetching: false
                         })
                     )
-                  })
+                  )
               )
-            })
+            )
         )
-      })
+      )
       .catch(err => console.error(err))
   }
 
@@ -124,14 +126,20 @@ class Search extends Component {
         albumName !== null &&
         albumCover !== null && (
           <div className="results-container">
-            <h2>{bandName}</h2>
+            <div className="bandName-container">
+              <span>Band name</span>
+              <h2>{bandName}</h2>
+            </div>
             <img src={albumCover} alt="albumCover" />
-            <h3>{albumName}</h3>
+            <div className="album-name-container">
+              <span>Album</span>
+              <h3>{albumName}</h3>
+            </div>
           </div>
         )}
         <div className="random-button-container">
           <button onClick={() => this._handleSearchClick()}>
-            {fetching ? '...' : 'Randomize new band'}
+            {fetching ? '...' : `Randomize 🤘`}
           </button>
         </div>
       </div>

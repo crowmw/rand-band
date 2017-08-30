@@ -6,19 +6,25 @@
   align-items: center;
   flex-flow: column;
   height: 100%;
+  width: 85%;
+  max-width: 500px;
 }
 
 .random-button-container {
   width: 100%;
   max-width: 500px;
+  display: flex;
+  align-items: top;
+  justify-content: center;
 }
 
 .random-button-container button {
-  width: 100%;
+  max-width: 500px;
+  width: 85%;
   background: #1db954;
   border: none;
   color: #ffffff;
-  font-size: 16px;
+  font-size: 13px;
   border-radius: 50px;
   padding: 10px;
   height: 60px;
@@ -29,6 +35,8 @@
   letter-spacing: 2px;
   margin: 32px 0px;
   padding: 21px 56px 19px 56px;
+  text-align: center;
+  vertical-align: middle;
 }
 
 .random-button-container button:hover {
@@ -39,6 +47,9 @@
   display: flex;
   flex-flow: column;
   align-items: center;
+  width: 85%;
+  max-width: 500px;
+  height: 60%;
 }
 
 .results-container img {
@@ -46,4 +57,39 @@
   max-width: 500px;
   max-height: 500px;
   box-sizing: border-box;
+  width: 100%;
+}
+
+.bandName-container {
+  display: flex;
+  flex-flow: column;
+  justify-content: center;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.bandName-container h2 {
+  margin: 0px;
+  margin-top: 5px;
+  /* font-size: 40px; */
+  text-align: center;
+}
+
+.album-name-container {
+  margin-top: 20px;
+  display: flex;
+  flex-flow: column;
+  justify-content: center;
+  align-items: center;
+}
+
+.album-name-container span,
+.bandName-container span {
+  color: grey;
+}
+
+h3 {
+  margin: 0px;
+  margin-top: 5px;
+  text-align: center;
 }

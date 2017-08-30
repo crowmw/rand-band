@@ -3,6 +3,7 @@ import axios from 'axios'
 import wiki from 'wikijs'
 // import thief from 'color-thief'
 import './style.css'
+import { flickrKey } from '../../config'
 
 class Search extends Component {
   constructor(props) {
@@ -53,8 +54,6 @@ class Search extends Component {
   }
 
   getRandomAlbumCover = () => {
-    const flickrKey = `09b7761bc73f30f24ba109ff7d28ad74`
-
     var url = `https://api.flickr.com/services/rest/?method=flickr.photos.getRecent`
     url += `&format=json`
     url += `&nojsoncallback=1`

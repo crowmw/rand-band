@@ -1,126 +1,24 @@
 import React, { Component } from 'react'
-import axios from 'axios'
 import './style.css'
-import { flickrKey } from '../../config'
 import GitHubRibbon from 'react-github-fork-ribbon'
+import { bindActionCreators } from 'redux'
+import { connect } from 'react-redux'
+import { randomize } from '../../actions'
 
 class Search extends Component {
   constructor(props) {
     super(props)
-    this.state = {
-      loaded: false,
-      bandName: null,
-      albumName: null,
-      albumCover: null,
-      fetching: false,
-      newData: {}
-    }
 
     this._handleSearchClick = this._handleSearchClick.bind(this)
-    this.getRandomAlbumTitle = this.getRandomAlbumTitle.bind(this)
-    this.getRandomTitle = this.getRandomTitle.bind(this)
   }
 
-  getRandomTitle = () => {
-    return axios
-      .get(
-        `https://en.wikipedia.org/w/api.php?format=json&origin=*&action=query&generator=random&grnnamespace=0&prop=revisions|images&rvprop=content&grnlimit=1`
-      )
-      .then(res => {
-        let response = res.data.query.pages[Object.keys(res.data.query.pages)[0]].title
-        if (response.includes('(')) {
-          return response.slice(0, response.indexOf('('))
-        }
-        if (response.includes(',')) {
-          return response.slice(0, response.indexOf(','))
-        }
-        return response
-      })
-      .catch(err => console.error(err))
-  }
-
-  getRandomAlbumTitle = () => {
-    return axios.get(`https://talaikis.com/api/quotes/random/`).then(res => {
-      let splittedQuote = res.data.quote.split(' ')
-      let wordsNumber = Math.floor(Math.random() * 5) + 1
-
-      if (splittedQuote.length <= wordsNumber) {
-        splittedQuote = splittedQuote[0].charAt(0).toUpperCase() + splittedQuote.slice(1)
-        return splittedQuote.join(' ').replace('.', '')
-      } else {
-        splittedQuote = splittedQuote.slice(splittedQuote.length - wordsNumber)
-        splittedQuote[0] = splittedQuote[0].charAt(0).toUpperCase() + splittedQuote[0].slice(1)
-        return splittedQuote.join(' ').replace('.', '')
-      }
-    })
-  }
-
-  getRandomAlbumCover = () => {
-    var url = `https://api.flickr.com/services/rest/?method=flickr.photos.getRecent`
-    url += `&format=json`
-    url += `&nojsoncallback=1`
-    url += `&per_page=50`
-    url += `&page=${Math.floor(Math.random() * 100) + 1}`
-    url += `&media=photos`
-    url += `&license=1,2,3,4,5,6,7`
-    url += `&extras=date_taken,date_upload,geo,license,owner_name,tags,url_o,url_l,url_c,url_z,url_n`
-    url += `&sort=interestingness-desc`
-    url += `&api_key=${flickrKey}`
-    url += `&content_type=1`
-
-    return axios.get(url).then(res => {
-      let photos = []
-      for (let photo of res.data.photos.photo) {
-        photo.width_l === photo.height_l && photo.width_l >= 500 && photos.push(photo.url_l)
-        photo.width_c === photo.height_c && photo.width_c >= 500 && photos.push(photo.url_c)
-        photo.width_n === photo.height_n && photo.width_n >= 500 && photos.push(photo.url_n)
-        photo.width_o === photo.height_o && photo.width_o >= 500 && photos.push(photo.url_o)
-        photo.width_z === photo.height_z && photo.width_z >= 500 && photos.push(photo.url_z)
-      }
-      return photos[Math.floor(Math.random() * photos.length)]
-    })
-  }
-
-  _handleSearchClick() {
-    this.setState({ fetching: true })
-    this.getRandomTitle()
-      .then(res =>
-        this.setState(
-          {
-            newData: { ...this.state.newData, bandName: res }
-          },
-          () =>
-            this.getRandomAlbumTitle().then(res =>
-              this.setState(
-                {
-                  newData: { ...this.state.newData, albumName: res }
-                },
-                () =>
-                  this.getRandomAlbumCover().then(res =>
-                    this.setState(
-                      {
-                        newData: { ...this.state.newData, albumCover: res }
-                      },
-                      () => {
-                        this.setState({
-                          bandName: this.state.newData.bandName,
-                          albumName: this.state.newData.albumName,
-                          albumCover: this.state.newData.albumCover,
-                          newData: {},
-                          fetching: false
-                        })
-                      }
-                    )
-                  )
-              )
-            )
-        )
-      )
-      .catch(err => console.error(err))
+  _handleSearchClick = () => {
+    this.props.randomize()
   }
 
   render() {
-    let { bandName, albumName, albumCover, fetching } = this.state
+    let { band, album, cover, fetching } = this.props
+    console.log(band, album, cover, fetching)
     return (
       <div className="container">
         <GitHubRibbon
@@ -129,26 +27,26 @@ class Search extends Component {
           href="https://github.com/crowmw/rand-band"
           target="_blank"
         >
-          Checkout GitHub 🔎
+          Checkout GitHub
         </GitHubRibbon>
-        {bandName !== null &&
-        albumName !== null &&
-        albumCover !== null && (
+        {band &&
+        album &&
+        cover && (
           <div className="results-container">
             <div className="bandName-container">
               <span>Band name</span>
-              <h2>{bandName}</h2>
+              <h2>{band.name}</h2>
             </div>
-            <img src={albumCover} alt="albumCover" />
+            <img src={cover.url} alt="albumCover" />
             <div className="album-name-container">
               <span>Album</span>
-              <h3>{albumName}</h3>
+              <h3>{album.title}</h3>
             </div>
           </div>
         )}
         <div className="random-button-container">
           <button onClick={() => this._handleSearchClick()}>
-            {fetching ? '...' : `Randomize 🤘`}
+            {fetching ? '...' : `Randomize`}
           </button>
         </div>
       </div>
@@ -156,4 +54,17 @@ class Search extends Component {
   }
 }
 
-export default Search
+const mapStateToProps = state => {
+  return {
+    fetching: state.fetching,
+    band: state.band,
+    cover: state.cover,
+    album: state.album
+  }
+}
+
+const mapDispatchToProps = dispatch => {
+  return bindActionCreators({ randomize }, dispatch)
+}
+
+export default connect(mapStateToProps, mapDispatchToProps)(Search)

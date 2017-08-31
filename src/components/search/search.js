@@ -1,6 +1,5 @@
 import React, { Component } from 'react'
 import axios from 'axios'
-// import thief from 'color-thief'
 import './style.css'
 import { flickrKey } from '../../config'
 
@@ -101,7 +100,7 @@ class Search extends Component {
                       {
                         newData: { ...this.state.newData, albumCover: res }
                       },
-                      () =>
+                      () => {
                         this.setState({
                           bandName: this.state.newData.bandName,
                           albumName: this.state.newData.albumName,
@@ -109,6 +108,7 @@ class Search extends Component {
                           newData: {},
                           fetching: false
                         })
+                      }
                     )
                   )
               )

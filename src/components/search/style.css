@@ -24,7 +24,7 @@
   background: #1db954;
   border: none;
   color: #ffffff;
-  font-size: 13px;
+  font-size: 12px;
   border-radius: 50px;
   padding: 10px;
   height: 60px;
@@ -44,12 +44,13 @@
 }
 
 .results-container {
+  padding-top: 40px;
   display: flex;
   flex-flow: column;
   align-items: center;
   width: 85%;
   max-width: 500px;
-  height: 60%;
+  height: 80%;
 }
 
 .results-container img {

@@ -2,6 +2,7 @@ import React, { Component } from 'react'
 import axios from 'axios'
 import './style.css'
 import { flickrKey } from '../../config'
+import GitHubRibbon from 'react-github-fork-ribbon'
 
 class Search extends Component {
   constructor(props) {
@@ -122,6 +123,14 @@ class Search extends Component {
     let { bandName, albumName, albumCover, fetching } = this.state
     return (
       <div className="container">
+        <GitHubRibbon
+          position="right"
+          color="orange"
+          href="https://github.com/crowmw/rand-band"
+          target="_blank"
+        >
+          Checkout GitHub 🔎
+        </GitHubRibbon>
         {bandName !== null &&
         albumName !== null &&
         albumCover !== null && (

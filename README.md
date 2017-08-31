@@ -1,5 +1,6 @@
 # rand-band
-randband.tk
+
+[randband.tk](http://randband.tk/)
 
 Generate random music band and album using random wikipedia article, random quote and random flickr photo
 
